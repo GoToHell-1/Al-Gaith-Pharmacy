@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية الغيث | نظام إدارة الجرد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Landing / Employee Selection Screen -->
+        <section id="selection-screen" class="screen active">
+            <div class="container">
+                <header class="main-header">
+                    <div class="logo">
+                        <i class="fas fa-hand-holding-medical"></i>
+                        <h1>صيدلية الغيث</h1>
+                    </div>
+                    <p class="subtitle">نظام إدارة الجرد والمخزن</p>
+                </header>
+
+                <div class="employee-grid" id="employee-grid">
+                    <!-- Employees will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Screen -->
+        <section id="dashboard-screen" class="screen">
+            <nav class="top-nav">
+                <div class="nav-content">
+                    <div class="user-info">
+                        <button id="back-btn" class="icon-btn"><i class="fas fa-arrow-right"></i></button>
+                        <span id="current-user-name">اسم الموظف</span>
+                    </div>
+                    <div class="nav-actions">
+                        <button id="add-item-btn" class="primary-btn">
+                            <i class="fas fa-plus"></i> إضافة مادة جديدة
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="dashboard-container">
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <span class="label">إجمالي المواد</span>
+                        <span class="value" id="total-items">0</span>
+                    </div>
+                    <div class="stat-card warning">
+                        <span class="label">قربت على الانتهاء</span>
+                        <span class="value" id="expiring-soon">0</span>
+                    </div>
+                </div>
+
+                <div class="inventory-section">
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="بحث عن مادة...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>اسم المادة</th>
+                                    <th>الكمية</th>
+                                    <th>تاريخ الإكسباير</th>
+                                    <th>ملاحظات</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-body">
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">إضافة مادة جديدة</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="item-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group image-upload">
+                    <label for="item-image">صورة المادة</label>
+                    <div class="image-preview" id="image-preview">
+                        <i class="fas fa-camera"></i>
+                        <span>اختر صورة</span>
+                        <img id="preview-img" src="" alt="">
+                    </div>
+                    <input type="file" id="item-image" accept="image/*" hidden>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item-name">اسم المادة</label>
+                        <input type="text" id="item-name" required placeholder="مثال: بانادول 500 ملغ">
+                    </div>
+                    <div class="form-group">
+                        <label for="item-quantity">الكمية</label>
+                        <input type="number" id="item-quantity" required min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item-expiry">تاريخ الإكسباير (MM/YYYY)</label>
+                        <input type="text" id="item-expiry" required placeholder="01/2026">
+                    </div>
+                    <div class="form-group camera-group">
+                        <label>التقاط صورة</label>
+                        <button type="button" id="start-camera" class="secondary-btn">
+                            <i class="fas fa-camera"></i> فتح الكاميرا
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Camera Overlay -->
+                <div id="camera-overlay" class="camera-overlay">
+                    <div class="camera-container">
+                        <video id="video" autoplay playsinline></video>
+                        <div class="camera-controls">
+                            <button type="button" id="capture-btn" class="capture-btn"><i
+                                    class="fas fa-circle"></i></button>
+                            <button type="button" id="close-camera" class="close-btn"><i
+                                    class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="item-notes">ملاحظات</label>
+                    <textarea id="item-notes" rows="3" placeholder="أضف ملاحظات إضافية هنا..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="submit-btn">حفظ البيانات</button>
+                    <button type="button" class="cancel-btn close-modal">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
