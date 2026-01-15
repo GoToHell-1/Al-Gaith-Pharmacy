@@ -57,7 +57,7 @@ body {
 .screen {
     display: none;
     min-height: 100vh;
-    padding: 2rem;
+    padding: clamp(1rem, 5vw, 2.5rem);
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -156,13 +156,27 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2.5rem;
+    padding: 1.2rem clamp(1rem, 3vw, 2.5rem);
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: 2rem;
-    margin-bottom: 3rem;
+    border-radius: 1.5rem;
+    margin-bottom: clamp(1.5rem, 4vw, 3rem);
     box-shadow: var(--card-shadow);
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .glass-nav {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 1.2rem;
+    }
+
+    .user-tag {
+        justify-content: center;
+    }
 }
 
 .user-tag {
@@ -194,19 +208,35 @@ body {
 /* Action Buttons */
 .action-bar {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .search-glass {
     background: rgba(15, 23, 42, 0.4);
     border: 1px solid var(--glass-border);
-    border-radius: 1.2rem;
+    border-radius: 1rem;
     display: flex;
     align-items: center;
-    padding: 0 1.2rem;
-    width: 350px;
+    padding: 0 1rem;
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
     transition: all 0.3s;
+}
+
+@media (max-width: 600px) {
+    .action-bar {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-glass,
+    .btn-add {
+        width: 100%;
+        max-width: none;
+    }
 }
 
 .search-glass:focus-within {
@@ -250,9 +280,9 @@ body {
 /* Stats Cards */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 45%, 300px), 1fr));
+    gap: 1.5rem;
+    margin-bottom: clamp(2rem, 6vw, 4rem);
 }
 
 .stat-box {
@@ -536,6 +566,21 @@ body {
     font-size: 1.1rem;
     border: none;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-save:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
 }
 
 /* Camera Fullscreen Overlay */
