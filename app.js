@@ -60,14 +60,32 @@ function init() {
 function initLayoutSwitcher() {
     const mobileBtn = document.getElementById('mobile-mode-btn');
     const desktopBtn = document.getElementById('desktop-mode-btn');
+    const switcher = document.querySelector('.layout-switch-fixed');
     const body = document.body;
 
     // Load saved preference
     const savedMode = localStorage.getItem('app_layout_mode') || 'desktop';
     setMode(savedMode);
+    // On initial load, start minimized if a mode was already set
+    if (localStorage.getItem('app_layout_mode')) {
+        switcher.classList.add('minimized');
+    }
 
-    mobileBtn.addEventListener('click', () => setMode('mobile'));
-    desktopBtn.addEventListener('click', () => setMode('desktop'));
+    mobileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMode('mobile');
+    });
+
+    desktopBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMode('desktop');
+    });
+
+    switcher.addEventListener('click', () => {
+        if (switcher.classList.contains('minimized')) {
+            switcher.classList.remove('minimized');
+        }
+    });
 
     function setMode(mode) {
         if (mode === 'mobile') {
@@ -82,7 +100,7 @@ function initLayoutSwitcher() {
             mobileBtn.classList.remove('active');
         }
         localStorage.setItem('app_layout_mode', mode);
-        // Re-render inventory to ensure layout consistency
+        switcher.classList.add('minimized');
         if (currentUser) renderInventory(searchInput.value);
     }
 }

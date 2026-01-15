@@ -25,9 +25,27 @@
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(20px);
     padding: 0.8rem 1.2rem;
-    border-radius: 2rem;
+    border-radius: 3rem;
     border: 2px solid var(--accent-teal);
     box-shadow: 0 0 30px rgba(45, 212, 191, 0.4);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 600px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.layout-switch-fixed.minimized {
+    max-width: 55px;
+    padding: 0.8rem;
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(45, 212, 191, 0.2);
+    border-color: rgba(45, 212, 191, 0.5);
+}
+
+.layout-switch-fixed.minimized:hover {
+    background: rgba(45, 212, 191, 0.3);
+    transform: scale(1.1);
 }
 
 .layout-header {
@@ -38,6 +56,22 @@
     border-right: 1px solid var(--glass-border);
     margin-right: 0.5rem;
     color: var(--accent-teal);
+    transition: all 0.3s;
+}
+
+.layout-switch-fixed.minimized .layout-header {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+.layout-switch-fixed.minimized .layout-header span,
+.layout-switch-fixed.minimized .layout-btn {
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .layout-header i {
