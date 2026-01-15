@@ -40,6 +40,7 @@ const imagePreviewContainer = document.getElementById('image-preview');
 const previewImg = document.getElementById('preview-img');
 const totalItemsEl = document.getElementById('total-items');
 const expiringSoonEl = document.getElementById('expiring-soon');
+const recentActivities = document.getElementById('recent-activities');
 
 // Camera Elements
 const cameraOverlay = document.getElementById('camera-overlay');
@@ -56,6 +57,7 @@ function init() {
 }
 
 function renderEmployees() {
+    // Render the initial selection list (kept simple)
     employeeGrid.innerHTML = employees.map(name => `
         <div class="employee-card" onclick="selectUser('${name}')">
             <div class="avatar-wrapper">
@@ -87,6 +89,7 @@ function goBack() {
 // --- Data Management ---
 
 function loadUserData() {
+    if (!currentUser) return;
     const userRef = ref(db, `inventory/${currentUser}`);
     onValue(userRef, (snapshot) => {
         const data = snapshot.val();
@@ -103,7 +106,7 @@ function loadUserData() {
 }
 
 function updateStats() {
-    totalItemsEl.textContent = inventory.length;
+    totalItemsEl.textContent = inventory.reduce((sum, it) => sum + (parseInt(it.quantity) || 0), 0);
 
     const today = new Date();
     const threeMonthsFromNow = new Date();
@@ -119,11 +122,15 @@ function updateStats() {
 
 function parseExpiry(expiryStr) {
     if (!expiryStr) return null;
+    // Accept MM/YYYY or MM/YY
     const parts = expiryStr.split('/');
     if (parts.length !== 2) return null;
     const [month, year] = parts;
     const fullYear = year.length === 2 ? "20" + year : year;
-    return new Date(fullYear, month - 1);
+    const m = parseInt(month);
+    const y = parseInt(fullYear);
+    if (isNaN(m) || isNaN(y)) return null;
+    return new Date(y, m - 1, 1);
 }
 
 // --- Camera Functions ---
@@ -151,8 +158,8 @@ function stopCamera() {
 
 function capturePhoto() {
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -170,37 +177,50 @@ function capturePhoto() {
 
 function renderInventory(searchTerm = '') {
     const filtered = inventory.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        item.name.toLowerCase().includes((searchTerm || '').toLowerCase())
     );
 
     itemsGrid.innerHTML = filtered.map(item => {
         const expiryDate = parseExpiry(item.expiry);
-        const isExpiringSoon = expiryDate ? (expiryDate < new Date() || checkExpiry(expiryDate)) : false;
-        const expiryText = isExpiringSoon ? 'قاربت على الصلاحية!' : 'صالحة';
+        const isExpired = expiryDate ? (expiryDate < new Date()) : false;
+        const isExpiringSoon = expiryDate ? checkExpiry(expiryDate) : false;
+        let statusLabel = 'In Stock';
+        let statusClass = 'status-ok';
+        if (isExpired) {
+            statusLabel = 'منتهي الصلاحية';
+            statusClass = 'status-expired';
+        } else if (isExpiringSoon) {
+            statusLabel = 'قاربة على الانتهاء';
+            statusClass = 'status-warning';
+        } else if ((parseInt(item.quantity) || 0) <= 5) {
+            statusLabel = 'Low Stock';
+            statusClass = 'status-low';
+        }
 
         return `
             <div class="item-card">
-                <div class="item-image-container">
-                    <img src="${item.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${item.name}">
-                </div>
-                <div class="item-info">
-                    <h3>${item.name}</h3>
-                    <span class="item-expiry ${isExpiringSoon ? 'soon' : ''}">
-                        <i class="far fa-calendar-alt"></i> إكسباير: ${item.expiry} (${expiryText})
-                    </span>
-                    
-                    <div class="qty-control">
-                        <button onclick="updateQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
-                        <span class="qty-val">${item.quantity}</span>
-                        <button onclick="updateQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
+                <div class="row">
+                    <div class="left">
+                        <div class="item-image-container">
+                            <img src="${item.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${item.name}">
+                        </div>
                     </div>
-                </div>
-                
-                <div class="item-footer">
-                    <div class="item-badge">${item.notes ? item.notes.substring(0, 15) + '...' : 'بدون ملاحظات'}</div>
-                    <div class="edit-tools">
-                        <button class="tool-btn edit" onclick="editItem('${item.id}')"><i class="fas fa-pen"></i></button>
-                        <button class="tool-btn delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                    <div class="center">
+                        <h3 class="item-title">${item.name}</h3>
+                        <div class="item-sub">SKU: ${item.sku || item.id || '—'}</div>
+                        <div class="controls">
+                            <button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
+                            <div class="qty-val">${item.quantity}</div>
+                            <button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <div class="expiry">Expiry: ${item.expiry || 'N/A'}</div>
+                        <div class="status ${statusClass}">${statusLabel}</div>
+                        <div class="tools">
+                            <button class="tool-btn edit" onclick="editItem('${item.id}')"><i class="fas fa-pen"></i></button>
+                            <button class="tool-btn delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,10 +228,11 @@ function renderInventory(searchTerm = '') {
     }).join('');
 
     if (filtered.length === 0) {
-        itemsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-dim);">لا توجد مواد تطابق بحثك</div>`;
+        itemsGrid.innerHTML = `<div class="empty-state">لا توجد مواد تطابق بحثك</div>`;
     }
 
     updateStats();
+    renderRecentActivities();
 }
 
 function checkExpiry(expiryDate) {
@@ -221,12 +242,27 @@ function checkExpiry(expiryDate) {
     return diffMonths < 3;
 }
 
+function renderRecentActivities() {
+    // For demo, show the latest inventory items as activities
+    if (!recentActivities) return;
+    const latest = inventory.slice().reverse().slice(0, 6);
+    recentActivities.innerHTML = latest.map(it => `
+        <div class="activity-row">
+            <div class="act-avatar"><i class="fas fa-box"></i></div>
+            <div class="act-body">
+                <div class="act-text">تمت إضافة ${it.quantity} وحدة من '${it.name}'</div>
+                <div class="act-time">الآن</div>
+            </div>
+        </div>
+    `).join('');
+}
+
 // --- CRUD Operations ---
 
 async function updateQty(id, delta) {
     const item = inventory.find(i => i.id === id);
     if (item) {
-        const newQty = Math.max(0, parseInt(item.quantity) + delta);
+        const newQty = Math.max(0, parseInt(item.quantity || 0) + delta);
         const itemRef = ref(db, `inventory/${currentUser}/${id}`);
         await update(itemRef, { quantity: newQty });
     }
@@ -308,7 +344,7 @@ function setupEventListeners() {
         try {
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('item-name').value;
-            const quantity = parseInt(document.getElementById('item-quantity').value);
+            const quantity = parseInt(document.getElementById('item-quantity').value || 0);
             const expiry = document.getElementById('item-expiry').value;
             const notes = document.getElementById('item-notes').value;
             let imageUrl = null;
