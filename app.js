@@ -208,7 +208,7 @@ function renderInventory(searchTerm = '') {
     }).join('');
 
     if (filtered.length === 0) {
-        itemsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 5rem; color: var(--text-dim);">لا توجد مواد تطابق بحثك</div>`;
+        itemsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-dim);">لا توجد مواد تطابق بحثك</div>`;
     }
 
     updateStats();
