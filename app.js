@@ -159,10 +159,14 @@ function capturePhoto() {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    previewImg.src = canvas.toDataURL('image/jpeg', 0.8);
-    previewImg.style.display = 'block';
-
-    stopCamera();
+    // Luxury Flash Effect
+    video.style.opacity = '0';
+    setTimeout(() => {
+        previewImg.src = canvas.toDataURL('image/jpeg', 0.8);
+        previewImg.style.display = 'block';
+        stopCamera();
+        video.style.opacity = '1';
+    }, 200);
 }
 
 // --- UI Rendering ---
