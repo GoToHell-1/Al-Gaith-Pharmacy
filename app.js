@@ -22,7 +22,6 @@ const employees = ['ايهاب', 'بسام', 'ضحى', 'حوراء', 'سارة',
 let currentUser = null;
 let inventory = [];
 let cameraStream = null;
-let dbUnsubscribe = null;
 
 // DOM Elements
 const selectionScreen = document.getElementById('selection-screen');
@@ -54,55 +53,6 @@ const closeCameraBtn = document.getElementById('close-camera');
 function init() {
     renderEmployees();
     setupEventListeners();
-    initLayoutSwitcher();
-}
-
-function initLayoutSwitcher() {
-    const mobileBtn = document.getElementById('mobile-mode-btn');
-    const desktopBtn = document.getElementById('desktop-mode-btn');
-    const switcher = document.querySelector('.layout-switch-fixed');
-    const body = document.body;
-
-    // Load saved preference
-    const savedMode = localStorage.getItem('app_layout_mode') || 'desktop';
-    setMode(savedMode);
-    // On initial load, start minimized if a mode was already set
-    if (localStorage.getItem('app_layout_mode')) {
-        switcher.classList.add('minimized');
-    }
-
-    mobileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        setMode('mobile');
-    });
-
-    desktopBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        setMode('desktop');
-    });
-
-    switcher.addEventListener('click', () => {
-        if (switcher.classList.contains('minimized')) {
-            switcher.classList.remove('minimized');
-        }
-    });
-
-    function setMode(mode) {
-        if (mode === 'mobile') {
-            body.classList.add('layout-mobile');
-            body.classList.remove('layout-desktop');
-            mobileBtn.classList.add('active');
-            desktopBtn.classList.remove('active');
-        } else {
-            body.classList.add('layout-desktop');
-            body.classList.remove('layout-mobile');
-            desktopBtn.classList.add('active');
-            mobileBtn.classList.remove('active');
-        }
-        localStorage.setItem('app_layout_mode', mode);
-        switcher.classList.add('minimized');
-        if (currentUser) renderInventory(searchInput.value);
-    }
 }
 
 function renderEmployees() {
@@ -121,8 +71,6 @@ function renderEmployees() {
 function selectUser(name) {
     currentUser = name;
     currentUserName.textContent = name;
-
-    if (dbUnsubscribe) dbUnsubscribe();
 
     loadUserData();
 
@@ -143,7 +91,7 @@ function loadUserData() {
     onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            inventory = Object.keys(data).map(key => ({
+            inventory = Object.keys(data).map(key => ( {
                 id: key,
                 ...data[key]
             }));
