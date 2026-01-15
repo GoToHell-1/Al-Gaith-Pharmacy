@@ -1,165 +1,133 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صيدلية الغيث | نظام إدارة الجرد</title>
+    <title>صيدلية الغيث | نظام الجرد الذكي</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <div id="app">
-        <!-- Landing / Employee Selection Screen -->
+        <!-- Selection Screen -->
         <section id="selection-screen" class="screen active">
-            <div class="container">
-                <header class="main-header">
-                    <div class="logo">
-                        <i class="fas fa-hand-holding-medical"></i>
-                        <h1>صيدلية الغيث</h1>
-                    </div>
-                    <p class="subtitle">نظام إدارة الجرد والمخزن</p>
-                </header>
-
-                <div class="employee-grid" id="employee-grid">
-                    <!-- Employees will be injected here -->
-                </div>
+            <div class="hero-section">
+                <h1>صيدلية الغيث</h1>
+                <p>نظام إدارة المخزون الرقمي الشامل</p>
+            </div>
+            <div class="employee-grid" id="employee-grid">
+                <!-- Injected via app.js -->
             </div>
         </section>
 
         <!-- Dashboard Screen -->
         <section id="dashboard-screen" class="screen">
-            <nav class="top-nav">
-                <div class="nav-content">
-                    <div class="user-info">
-                        <button id="back-btn" class="icon-btn"><i class="fas fa-arrow-right"></i></button>
-                        <span id="current-user-name">اسم الموظف</span>
-                    </div>
-                    <div class="nav-actions">
-                        <button id="add-item-btn" class="primary-btn">
-                            <i class="fas fa-plus"></i> إضافة مادة جديدة
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="dashboard-container">
-                <div class="stats-bar">
-                    <div class="stat-card">
-                        <span class="label">إجمالي المواد</span>
-                        <span class="value" id="total-items">0</span>
-                    </div>
-                    <div class="stat-card warning">
-                        <span class="label">قربت على الانتهاء</span>
-                        <span class="value" id="expiring-soon">0</span>
-                    </div>
-                </div>
-
-                <div class="inventory-section">
-                    <div class="table-controls">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="search-input" placeholder="بحث عن مادة...">
+            <div class="dashboard-layout">
+                <nav class="glass-nav">
+                    <div class="user-tag">
+                        <button id="back-btn" class="back-circle"><i class="fas fa-chevron-right"></i></button>
+                        <div>
+                            <span id="current-user-name" style="font-weight: 900; font-size: 1.5rem; display: block;">اسم الموظف</span>
+                            <span style="color: var(--accent-teal); font-size: 0.9rem;">لوحة التحكم الرئيسية</span>
                         </div>
                     </div>
-
-                    <div class="table-responsive">
-                        <table id="inventory-table">
-                            <thead>
-                                <tr>
-                                    <th>الصورة</th>
-                                    <th>اسم المادة</th>
-                                    <th>الكمية</th>
-                                    <th>تاريخ الإكسباير</th>
-                                    <th>ملاحظات</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventory-body">
-                                <!-- Data will be injected here -->
-                            </tbody>
-                        </table>
+                    <div class="action-bar">
+                        <div class="search-glass">
+                            <i class="fas fa-search" style="color: var(--text-dim);"></i>
+                            <input type="text" id="search-input" placeholder="بحث عن مادة...">
+                        </div>
+                        <button id="add-item-btn" class="btn-add">
+                            <i class="fas fa-plus-circle"></i> إضافة مادة
+                        </button>
                     </div>
+                </nav>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">إجمالي المواد</span>
+                        <span class="count" id="total-items">0</span>
+                    </div>
+                    <div class="stat-box warning">
+                        <span style="color: var(--text-dim);">مواد قاربت على الانتهاء</span>
+                        <span class="count" id="expiring-soon">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">الحالة</span>
+                        <span class="count" style="font-size: 1.5rem; color: var(--success);"><i class="fas fa-check-circle"></i> متصل</span>
+                    </div>
+                </div>
+
+                <div class="items-grid" id="items-grid">
+                    <!-- Items will appear as glass cards here -->
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Add/Edit Modal -->
+    <!-- Modal for Adding/Editing -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modal-title">إضافة مادة جديدة</h2>
-                <button class="close-modal">&times;</button>
             </div>
             <form id="item-form">
                 <input type="hidden" id="edit-id">
-                <div class="form-group image-upload">
-                    <label for="item-image">صورة المادة</label>
-                    <div class="image-preview" id="image-preview">
-                        <i class="fas fa-camera"></i>
-                        <span>اختر صورة</span>
-                        <img id="preview-img" src="" alt="">
-                    </div>
-                    <input type="file" id="item-image" accept="image/*" hidden>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="item-name">اسم المادة</label>
-                        <input type="text" id="item-name" required placeholder="مثال: بانادول 500 ملغ">
-                    </div>
-                    <div class="form-group">
-                        <label for="item-quantity">الكمية</label>
-                        <input type="number" id="item-quantity" required min="0" value="0">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="item-expiry">تاريخ الإكسباير (MM/YYYY)</label>
-                        <input type="text" id="item-expiry" required placeholder="01/2026">
-                    </div>
-                    <div class="form-group camera-group">
-                        <label>التقاط صورة</label>
-                        <button type="button" id="start-camera" class="secondary-btn">
-                            <i class="fas fa-camera"></i> فتح الكاميرا
+                <div class="form-grid">
+                    <div class="full-width">
+                        <div class="camera-preview-box" id="image-preview">
+                            <i class="fas fa-camera-retro" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                            <span>انقر لالتقاط صورة أو اختيار ملف</span>
+                            <img id="preview-img" style="display:none">
+                        </div>
+                        <input type="file" id="item-image" accept="image/*" hidden>
+                        <button type="button" id="start-camera" class="btn-cancel" style="width: 100%; margin-top: 0.5rem; background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);">
+                            <i class="fas fa-camera"></i> تشغيل الكاميرا الخلفية
                         </button>
                     </div>
-                </div>
 
-                <!-- Camera Overlay -->
-                <div id="camera-overlay" class="camera-overlay">
-                    <div class="camera-container">
-                        <video id="video" autoplay playsinline></video>
-                        <div class="camera-controls">
-                            <button type="button" id="capture-btn" class="capture-btn"><i
-                                    class="fas fa-circle"></i></button>
-                            <button type="button" id="close-camera" class="close-btn"><i
-                                    class="fas fa-times"></i></button>
-                        </div>
+                    <div class="input-box full-width">
+                        <label>اسم المادة</label>
+                        <input type="text" id="item-name" required placeholder="مثال: Vitamin C 1000mg">
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="item-notes">ملاحظات</label>
-                    <textarea id="item-notes" rows="3" placeholder="أضف ملاحظات إضافية هنا..."></textarea>
+                    <div class="input-box">
+                        <label>تاريخ الإكسباير</label>
+                        <input type="text" id="item-expiry" required placeholder="MM/YYYY">
+                    </div>
+
+                    <div class="input-box">
+                        <label>الكمية الحالية</label>
+                        <input type="number" id="item-quantity" required min="0" value="0">
+                    </div>
+
+                    <div class="input-box full-width">
+                        <label>ملاحظات إضافية</label>
+                        <textarea id="item-notes" rows="3" placeholder="أدخل أي ملاحظات هنا..."></textarea>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="submit-btn">حفظ البيانات</button>
-                    <button type="button" class="cancel-btn close-modal">إلغاء</button>
+                    <button type="submit" class="btn-save">حفظ البيانات</button>
+                    <button type="button" class="btn-cancel close-modal">إلغاء</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Fullscreen Camera Overlay -->
+    <div id="camera-overlay" class="camera-full">
+        <video id="video" autoplay playsinline></video>
+        <div class="cam-controls">
+            <button id="close-camera" class="back-circle" style="font-size: 1.5rem; width: 60px; height: 60px;"><i class="fas fa-times"></i></button>
+            <div id="capture-btn" class="shutter"></div>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
 </body>
-
 </html>

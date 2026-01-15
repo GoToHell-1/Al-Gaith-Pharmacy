@@ -28,8 +28,8 @@ let dbUnsubscribe = null;
 const selectionScreen = document.getElementById('selection-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const employeeGrid = document.getElementById('employee-grid');
+const itemsGrid = document.getElementById('items-grid');
 const currentUserName = document.getElementById('current-user-name');
-const inventoryBody = document.getElementById('inventory-body');
 const searchInput = document.getElementById('search-input');
 const backBtn = document.getElementById('back-btn');
 const addItemBtn = document.getElementById('add-item-btn');
@@ -59,7 +59,9 @@ function init() {
 function renderEmployees() {
     employeeGrid.innerHTML = employees.map(name => `
         <div class="employee-card" onclick="selectUser('${name}')">
-            <i class="fas fa-user-md"></i>
+            <div class="avatar-wrapper">
+                <i class="fas fa-user-md"></i>
+            </div>
             <h3>${name}</h3>
         </div>
     `).join('');
@@ -69,9 +71,8 @@ function renderEmployees() {
 
 function selectUser(name) {
     currentUser = name;
-    currentUserName.textContent = `الموظف: ${name}`;
+    currentUserName.textContent = name;
 
-    // Stop previous listener if exists
     if (dbUnsubscribe) dbUnsubscribe();
 
     loadUserData();
@@ -82,7 +83,6 @@ function selectUser(name) {
 
 function goBack() {
     currentUser = null;
-    if (dbUnsubscribe) dbUnsubscribe();
     dashboardScreen.classList.remove('active');
     selectionScreen.classList.add('active');
 }
@@ -91,7 +91,6 @@ function goBack() {
 
 function loadUserData() {
     const userRef = ref(db, `inventory/${currentUser}`);
-    // Subscribe to real-time updates
     onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -126,7 +125,8 @@ function parseExpiry(expiryStr) {
     const parts = expiryStr.split('/');
     if (parts.length !== 2) return null;
     const [month, year] = parts;
-    return new Date(year, month - 1);
+    const fullYear = year.length === 2 ? "20" + year : year;
+    return new Date(fullYear, month - 1);
 }
 
 // --- Camera Functions ---
@@ -172,39 +172,42 @@ function renderInventory(searchTerm = '') {
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    inventoryBody.innerHTML = filtered.map(item => {
+    itemsGrid.innerHTML = filtered.map(item => {
         const expiryDate = parseExpiry(item.expiry);
-        const isExpiringSoon = expiryDate ? checkExpiry(expiryDate) : false;
+        const isExpiringSoon = expiryDate ? (expiryDate < new Date() || checkExpiry(expiryDate)) : false;
+        const expiryText = isExpiringSoon ? 'قاربت على الصلاحية!' : 'صالحة';
 
         return `
-            <tr>
-                <td data-label="الصورة"><img src="${item.image || 'https://via.placeholder.com/50'}" class="item-img" alt=""></td>
-                <td data-label="اسم المادة"><strong>${item.name}</strong></td>
-                <td data-label="الكمية">
-                    <div class="qty-control">
-                        <button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
-                        <span class="qty-val">${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
-                    </div>
-                </td>
-                <td data-label="تاريخ الإكسباير">
-                    <span class="expiry-tag ${isExpiringSoon ? 'soon' : 'fine'}">
-                        ${item.expiry}
+            <div class="item-card">
+                <div class="item-image-container">
+                    <img src="${item.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${item.name}">
+                </div>
+                <div class="item-info">
+                    <h3>${item.name}</h3>
+                    <span class="item-expiry ${isExpiringSoon ? 'soon' : ''}">
+                        <i class="far fa-calendar-alt"></i> إكسباير: ${item.expiry} (${expiryText})
                     </span>
-                </td>
-                <td data-label="ملاحظات" style="font-size: 0.9rem; color: var(--text-muted)">${item.notes || '-'}</td>
-                <td data-label="الإجراءات">
-                    <div class="actions">
-                        <button class="action-btn edit" onclick="editItem('${item.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+                    
+                    <div class="qty-control">
+                        <button onclick="updateQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
+                        <span class="qty-val">${item.quantity}</span>
+                        <button onclick="updateQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
                     </div>
-                </td>
-            </tr>
+                </div>
+                
+                <div class="item-footer">
+                    <div class="item-badge">${item.notes ? item.notes.substring(0, 15) + '...' : 'بدون ملاحظات'}</div>
+                    <div class="edit-tools">
+                        <button class="tool-btn edit" onclick="editItem('${item.id}')"><i class="fas fa-pen"></i></button>
+                        <button class="tool-btn delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+            </div>
         `;
     }).join('');
 
     if (filtered.length === 0) {
-        inventoryBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted)">لا توجد مواد للعرض</td></tr>`;
+        itemsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 5rem; color: var(--text-dim);">لا توجد مواد تطابق بحثك</div>`;
     }
 
     updateStats();
@@ -229,7 +232,7 @@ async function updateQty(id, delta) {
 }
 
 async function deleteItem(id) {
-    if (confirm('هل أنت متأكد من حذف هذه المادة؟')) {
+    if (confirm('هل أنت متأكد من حذف هذه المادة تماماً؟')) {
         const itemRef = ref(db, `inventory/${currentUser}/${id}`);
         await remove(itemRef);
     }
@@ -239,12 +242,12 @@ function editItem(id) {
     const item = inventory.find(i => i.id === id);
     if (!item) return;
 
-    document.getElementById('modal-title').textContent = 'تعديل مادة';
+    document.getElementById('modal-title').textContent = 'تعديل بيانات المادة';
     document.getElementById('edit-id').value = item.id;
     document.getElementById('item-name').value = item.name;
     document.getElementById('item-quantity').value = item.quantity;
     document.getElementById('item-expiry').value = item.expiry;
-    document.getElementById('item-notes').value = item.notes;
+    document.getElementById('item-notes').value = item.notes || '';
 
     if (item.image) {
         previewImg.src = item.image;
@@ -265,7 +268,7 @@ function setupEventListeners() {
     addItemBtn.addEventListener('click', () => {
         itemForm.reset();
         document.getElementById('edit-id').value = '';
-        document.getElementById('modal-title').textContent = 'إضافة مادة جديدة';
+        document.getElementById('modal-title').textContent = 'إضافة مادة للمخزن';
         previewImg.style.display = 'none';
         previewImg.src = '';
         modal.classList.add('active');
@@ -275,16 +278,10 @@ function setupEventListeners() {
         btn.addEventListener('click', () => modal.classList.remove('active'));
     });
 
-    // Camera listeners
     startCameraBtn.addEventListener('click', startCamera);
     closeCameraBtn.addEventListener('click', stopCamera);
     captureBtn.addEventListener('click', capturePhoto);
 
-    window.onclick = (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-    };
-
-    // Image Handling (File upload fallback)
     imagePreviewContainer.addEventListener('click', () => imageInput.click());
 
     imageInput.addEventListener('change', function () {
@@ -299,14 +296,13 @@ function setupEventListeners() {
         }
     });
 
-    // Form Submit
     itemForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const saveBtn = itemForm.querySelector('.submit-btn');
+        const saveBtn = itemForm.querySelector('.btn-save');
         const originalText = saveBtn.textContent;
         saveBtn.disabled = true;
-        saveBtn.textContent = 'جاري الحفظ...';
+        saveBtn.textContent = 'جاري المعالجة...';
 
         try {
             const id = document.getElementById('edit-id').value;
@@ -316,50 +312,38 @@ function setupEventListeners() {
             const notes = document.getElementById('item-notes').value;
             let imageUrl = null;
 
-            // Handle Image Upload if it's a new photo (base64)
             if (previewImg.src && previewImg.src.startsWith('data:')) {
                 const storageRef = sRef(storage, `images/${currentUser}/${Date.now()}.jpg`);
                 await uploadString(storageRef, previewImg.src, 'data_url');
                 imageUrl = await getDownloadURL(storageRef);
             } else if (previewImg.src && !previewImg.src.includes('via.placeholder')) {
-                imageUrl = previewImg.src; // Keep existing image
+                imageUrl = previewImg.src;
             }
 
-            const itemData = {
-                name,
-                quantity,
-                expiry,
-                notes,
-                image: imageUrl
-            };
+            const itemData = { name, quantity, expiry, notes, image: imageUrl };
 
             if (id) {
-                // Update
-                const itemRef = ref(db, `inventory/${currentUser}/${id}`);
-                await update(itemRef, itemData);
+                await update(ref(db, `inventory/${currentUser}/${id}`), itemData);
             } else {
-                // Create
-                const userRef = ref(db, `inventory/${currentUser}`);
-                await push(userRef, itemData);
+                await push(ref(db, `inventory/${currentUser}`), itemData);
             }
 
             modal.classList.remove('active');
         } catch (error) {
             console.error(error);
-            alert('حدث خطأ أثناء حفظ البيانات');
+            alert('خطأ في الاتصال بقاعدة البيانات');
         } finally {
             saveBtn.disabled = false;
             saveBtn.textContent = originalText;
         }
     });
 
-    // Search
     searchInput.addEventListener('input', (e) => {
         renderInventory(e.target.value);
     });
 }
 
-// Global scope functions for onclick handlers
+// Global scope expose
 window.selectUser = selectUser;
 window.updateQty = updateQty;
 window.deleteItem = deleteItem;
