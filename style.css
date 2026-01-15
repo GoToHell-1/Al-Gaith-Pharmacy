@@ -13,20 +13,59 @@
     --mobile-font-scale: 0.9;
 }
 
-/* Layout Switcher UI */
+/* Layout Switcher UI - Prominent at Top Left */
 .layout-switch-fixed {
     position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    z-index: 3000;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 5000;
     display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 0.8rem 1.2rem;
+    border-radius: 2rem;
+    border: 2px solid var(--accent-teal);
+    box-shadow: 0 0 30px rgba(45, 212, 191, 0.4);
+}
+
+.layout-header {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 0.5rem;
-    border-radius: 1.5rem;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding-right: 0.8rem;
+    border-right: 1px solid var(--glass-border);
+    margin-right: 0.5rem;
+    color: var(--accent-teal);
+}
+
+.layout-header i {
+    font-size: 1.2rem;
+    animation: pulse 2s infinite;
+}
+
+.layout-header span {
+    font-weight: 900;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .layout-btn {
