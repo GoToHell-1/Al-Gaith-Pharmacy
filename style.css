@@ -10,6 +10,141 @@
     --danger: #fda4af;
     --success: #6ee7b7;
     --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    --mobile-font-scale: 0.9;
+}
+
+/* Layout Switcher UI */
+.layout-switch-fixed {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 3000;
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.layout-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 0.8rem 1.2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-weight: 800;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.layout-btn.active {
+    background: var(--accent-teal);
+    color: #0f172a;
+}
+
+/* Force Mobile Mode regardless of screen */
+body.layout-mobile {
+    font-size: var(--mobile-font-scale);
+}
+
+body.layout-mobile .hero-section h1 {
+    font-size: 2.2rem;
+}
+
+body.layout-mobile .employee-grid {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+}
+
+body.layout-mobile .glass-nav {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.2rem;
+}
+
+body.layout-mobile .action-bar {
+    flex-direction: column;
+    width: 100%;
+}
+
+body.layout-mobile .search-glass {
+    width: 100%;
+    max-width: none;
+}
+
+body.layout-mobile .btn-add {
+    width: 100%;
+    justify-content: center;
+}
+
+body.layout-mobile .items-grid {
+    grid-template-columns: 1fr;
+}
+
+body.layout-mobile .stats-grid {
+    grid-template-columns: 1fr;
+}
+
+body.layout-mobile .modal-content {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+}
+
+body.layout-mobile .form-grid {
+    grid-template-columns: 1fr;
+}
+
+body.layout-mobile .full-width {
+    grid-column: auto;
+}
+
+body.layout-mobile .modal-footer {
+    flex-direction: column;
+}
+
+/* Force Desktop Mode regardless of screen */
+body.layout-desktop .hero-section h1 {
+    font-size: 4rem;
+}
+
+body.layout-desktop .employee-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1200px;
+}
+
+body.layout-desktop .glass-nav {
+    flex-direction: row;
+}
+
+body.layout-desktop .action-bar {
+    flex-direction: row;
+    width: auto;
+}
+
+body.layout-desktop .search-glass {
+    width: 350px;
+}
+
+body.layout-desktop .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+body.layout-desktop .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+body.layout-desktop .form-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+body.layout-desktop .modal-footer {
+    flex-direction: row;
 }
 
 * {

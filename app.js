@@ -54,6 +54,37 @@ const closeCameraBtn = document.getElementById('close-camera');
 function init() {
     renderEmployees();
     setupEventListeners();
+    initLayoutSwitcher();
+}
+
+function initLayoutSwitcher() {
+    const mobileBtn = document.getElementById('mobile-mode-btn');
+    const desktopBtn = document.getElementById('desktop-mode-btn');
+    const body = document.body;
+
+    // Load saved preference
+    const savedMode = localStorage.getItem('app_layout_mode') || 'desktop';
+    setMode(savedMode);
+
+    mobileBtn.addEventListener('click', () => setMode('mobile'));
+    desktopBtn.addEventListener('click', () => setMode('desktop'));
+
+    function setMode(mode) {
+        if (mode === 'mobile') {
+            body.classList.add('layout-mobile');
+            body.classList.remove('layout-desktop');
+            mobileBtn.classList.add('active');
+            desktopBtn.classList.remove('active');
+        } else {
+            body.classList.add('layout-desktop');
+            body.classList.remove('layout-mobile');
+            desktopBtn.classList.add('active');
+            mobileBtn.classList.remove('active');
+        }
+        localStorage.setItem('app_layout_mode', mode);
+        // Re-render inventory to ensure layout consistency
+        if (currentUser) renderInventory(searchInput.value);
+    }
 }
 
 function renderEmployees() {

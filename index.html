@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +13,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="app">
+        <!-- Layout Switcher -->
+        <div class="layout-switch-fixed">
+            <button class="layout-btn" id="mobile-mode-btn"><i class="fas fa-mobile-alt"></i> هاتف</button>
+            <button class="layout-btn active" id="desktop-mode-btn"><i class="fas fa-desktop"></i> حاسبة</button>
+        </div>
+
         <!-- Selection Screen -->
         <section id="selection-screen" class="screen active">
             <div class="hero-section">
@@ -32,7 +40,8 @@
                     <div class="user-tag">
                         <button id="back-btn" class="back-circle"><i class="fas fa-chevron-right"></i></button>
                         <div>
-                            <span id="current-user-name" style="font-weight: 900; font-size: 1.5rem; display: block;">اسم الموظف</span>
+                            <span id="current-user-name"
+                                style="font-weight: 900; font-size: 1.5rem; display: block;">اسم الموظف</span>
                             <span style="color: var(--accent-teal); font-size: 0.9rem;">لوحة التحكم الرئيسية</span>
                         </div>
                     </div>
@@ -58,7 +67,8 @@
                     </div>
                     <div class="stat-box">
                         <span style="color: var(--text-dim);">الحالة</span>
-                        <span class="count" style="font-size: 1.5rem; color: var(--success);"><i class="fas fa-check-circle"></i> متصل</span>
+                        <span class="count" style="font-size: 1.5rem; color: var(--success);"><i
+                                class="fas fa-check-circle"></i> متصل</span>
                     </div>
                 </div>
 
@@ -85,7 +95,8 @@
                             <img id="preview-img" style="display:none">
                         </div>
                         <input type="file" id="item-image" accept="image/*" hidden>
-                        <button type="button" id="start-camera" class="btn-cancel" style="width: 100%; margin-top: 0.5rem; background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);">
+                        <button type="button" id="start-camera" class="btn-cancel"
+                            style="width: 100%; margin-top: 0.5rem; background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);">
                             <i class="fas fa-camera"></i> تشغيل الكاميرا الخلفية
                         </button>
                     </div>
@@ -123,11 +134,13 @@
     <div id="camera-overlay" class="camera-full">
         <video id="video" autoplay playsinline></video>
         <div class="cam-controls">
-            <button id="close-camera" class="back-circle" style="font-size: 1.5rem; width: 60px; height: 60px;"><i class="fas fa-times"></i></button>
+            <button id="close-camera" class="back-circle" style="font-size: 1.5rem; width: 60px; height: 60px;"><i
+                    class="fas fa-times"></i></button>
             <div id="capture-btn" class="shutter"></div>
         </div>
     </div>
 
     <script type="module" src="app.js"></script>
 </body>
+
 </html>
