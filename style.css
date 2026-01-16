@@ -1,0 +1,59 @@
+:root {
+    --primary-gradient: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+    --accent-teal: #5eead4;
+    --accent-blue: #7dd3fc;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(20px);
+    --text-white: #f1f5f9;
+    --text-dim: #94a3b8;
+    --danger: #fda4af;
+    --success: #6ee7b7;
+    --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    background: var(--primary-gradient);
+    background-attachment: fixed;
+    color: var(--text-white);
+    min-height: 800px;
+    width: 360px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screen {
+    display: none;
+    min-height: 800px;
+    width: 360px;
+    padding: 20px;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* ... (keep the rest of original CSS from previous version) ... */
+
+/* Shortages styles */
+.shortages-panel{display:block;margin-top:8px}
+.shortages-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:260px;overflow:auto;margin-top:8px}
+.shortage-item{background:var(--glass-bg);border:1px solid var(--glass-border);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.shortage-item img{width:100%;height:120px;object-fit:cover;border-radius:6px;cursor:pointer}
+.shortage-note{font-size:12px;color:var(--text-dim);text-align:center}
+.shortage-del{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text-dim);padding:6px 8px;border-radius:8px;cursor:pointer}
+.image-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:3000}
+.overlay-card{background:#0f172a;padding:12px;border-radius:12px;border:1px solid var(--glass-border);max-width:90%;max-height:90%;overflow:auto}
+.overlay-card img{width:100%;height:auto;border-radius:8px}
+.overlay-note{color:var(--text-dim);margin-top:8px}
+.overlay-close,.overlay-del{margin-top:8px;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}

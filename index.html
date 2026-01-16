@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية الغيث | نظام الجرد الذكي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" style="width: 360px; height: 800px; margin: 0 auto;">
+        <!-- Selection Screen -->
+        <section id="selection-screen" class="screen active">
+            <div class="hero-section">
+                <h1>صيدلية الغيث</h1>
+                <p>نظام إدارة المخزون الرقمي الشامل</p>
+            </div>
+            <div class="employee-grid" id="employee-grid">
+                <!-- Injected via app.js -->
+            </div>
+        </section>
+
+        <!-- Dashboard Screen -->
+        <section id="dashboard-screen" class="screen">
+            <div class="dashboard-layout">
+                <nav class="glass-nav">
+                    <div class="user-tag">
+                        <button id="back-btn" class="back-circle"><i class="fas fa-chevron-right"></i></button>
+                        <div>
+                            <span id="current-user-name" style="font-weight: 900; font-size: 1.2rem; display: block;">اسم الموظف</span>
+                            <span style="color: var(--accent-teal); font-size: 0.8rem;">لوحة التحكم الرئيسية</span>
+                        </div>
+                    </div>
+                    <div class="action-bar">
+                        <div class="search-glass">
+                            <i class="fas fa-search" style="color: var(--text-dim);"></i>
+                            <input type="text" id="search-input" placeholder="بحث عن مادة...">
+                        </div>
+                        <button id="add-item-btn" class="btn-add">
+                            <i class="fas fa-plus-circle"></i> إضافة مادة
+                        </button>
+                    </div>
+                </nav>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">إجمالي المواد</span>
+                        <span class="count" id="total-items">0</span>
+                    </div>
+                    <div class="stat-box warning">
+                        <span style="color: var(--text-dim);">مواد قاربت على الانتهاء</span>
+                        <span class="count" id="expiring-soon">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">الحالة</span>
+                        <span class="count" style="font-size: 1.1rem; color: var(--success);"><i class="fas fa-check-circle"></i> متصل</span>
+                    </div>
+                </div>
+
+                <div class="main-row">
+                    <div class="list-column">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h2>Items</h2>
+                            </div>
+                            <div id="items-grid" class="items-grid">
+                                <!-- Items will appear here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right column: Shortages panel -->
+                    <aside class="right-column">
+                        <div class="panel">
+                            <h3>النواقص اليومية</h3>
+                            <button id="shortages-toggle" class="btn-add" style="width:100%;margin-bottom:8px;">فتح النواقص اليومية</button>
+                            <div id="shortages-panel" class="shortages-panel">
+                                <form id="shortage-form">
+                                    <div class="shortage-controls">
+                                        <div id="shortage-preview" class="shortage-preview"><img id="shortage-preview-img" style="display:none;max-width:100%"></div>
+                                        <input type="file" id="shortage-image" accept="image/*">
+                                        <button type="button" id="start-camera-shortage" class="btn-cancel">التقاط بالكاميرا</button>
+                                    </div>
+                                    <div class="input-box">
+                                        <label>ملاحظة عن النقص</label>
+                                        <textarea id="shortage-note" rows="3" placeholder="اكتب ملاحظة..."></textarea>
+                                    </div>
+                                    <div style="display:flex;gap:8px;margin-top:8px;">
+                                        <button type="submit" class="btn-save">أضف للنواقص</button>
+                                    </div>
+                                </form>
+
+                                <div id="shortages-grid" class="shortages-grid">
+                                    <!-- shortage items -->
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal for Adding/Editing -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">إضافة مادة جديدة</h2>
+            </div>
+            <form id="item-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-grid">
+                    <div class="full-width">
+                        <div class="camera-preview-box" id="image-preview">
+                            <i class="fas fa-camera-retro" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                            <span>انقر لالتقاط صورة أو اختيار ملف</span>
+                            <img id="preview-img" style="display:none">
+                        </div>
+                        <input type="file" id="item-image" accept="image/*" hidden>
+                        <button type="button" id="start-camera" class="btn-cancel" style="width: 100%; margin-top: 0.5rem; background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);">
+                            <i class="fas fa-camera"></i> تشغيل الكاميرا الخلفية
+                        </button>
+                    </div>
+
+                    <div class="input-box full-width">
+                        <label>اسم المادة</label>
+                        <input type="text" id="item-name" required placeholder="مثال: Vitamin C 1000mg">
+                    </div>
+
+                    <div class="input-box">
+                        <label>تاريخ الإكسباير</label>
+                        <input type="text" id="item-expiry" required placeholder="MM/YYYY">
+                    </div>
+
+                    <div class="input-box">
+                        <label>الكمية الحالية</label>
+                        <input type="number" id="item-quantity" required min="0" value="0">
+                    </div>
+
+                    <div class="input-box full-width">
+                        <label>ملاحظات إضافية</label>
+                        <textarea id="item-notes" rows="3" placeholder="أدخل أي ملاحظات هنا..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn-save">حفظ البيانات</button>
+                    <button type="button" class="btn-cancel close-modal">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fullscreen Camera Overlay -->
+    <div id="camera-overlay" class="camera-full">
+        <video id="video" autoplay playsinline></video>
+        <div class="cam-controls">
+            <button id="close-camera" class="back-circle" style="font-size: 1.5rem; width: 60px; height: 60px;"><i class="fas fa-times"></i></button>
+            <div id="capture-btn" class="shutter"></div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
