@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Al-Ghaith Pharmacy - جرد الأدوية</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <h1 class="brand">Al-Ghaith Pharmacy</h1>
+  </header>
+
+  <main class="container">
+    <section class="left-col">
+      <div class="card">
+        <h2>إضافة مادة جديدة</h2>
+        <form id="itemForm">
+          <label>اسم المادة
+            <input type="text" id="itemName" required placeholder="مثال: باراسيتامول">
+          </label>
+
+          <label>صنف المادة
+            <input type="text" id="itemCategory" placeholder="مثال: مسكنات/مضاد حيوي">
+          </label>
+
+          <label>تاريخ الانتهاء
+            <input type="date" id="itemExpiry" required>
+          </label>
+
+          <label>الكمية
+            <input type="number" id="itemQty" min="0" value="1" required>
+          </label>
+
+          <label>ملاحظة
+            <input type="text" id="itemNote" placeholder="ملاحظة إضافية">
+          </label>
+
+          <label>الموظف المسؤول
+            <select id="employeeSelect"></select>
+          </label>
+
+          <label class="photo-label">صورة المادة (الكاميرا الخلفية)
+            <input type="file" accept="image/*" capture="environment" id="itemImage">
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary">إضافة إلى جدول الموظف</button>
+            <button type="button" id="clearForm" class="btn">مسح الحقول</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>نواقص المسواك</h2>
+        <form id="miswakForm">
+          <label>صورة المسواك (التقط صورة)
+            <input type="file" accept="image/*" capture="environment" id="miswakImage" required>
+          </label>
+          <label>ملاحظة عن النقص
+            <input type="text" id="miswakNote" placeholder="مثال: نفذت الكمية، بحاجة طلب عاجل">
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn warn">إضافة إلى نواقص المسواك</button>
+            <button type="button" id="clearMiswak" class="btn">مسح</button>
+          </div>
+        </form>
+
+        <div id="miswakList" class="list"></div>
+      </div>
+    </section>
+
+    <section class="right-col">
+      <div class="card">
+        <h2>قائمة الموظفين / جدول الجرد</h2>
+        <div id="employeesList" class="tabs"></div>
+      </div>
+
+      <div class="card">
+        <h2>جرد الموظف</h2>
+        <div id="inventoryArea">
+          <p class="muted">اختر موظفاً من الأعلى لعرض جدول الجرد الخاص به.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>BY:NZAR NURI 07804678287</div>
+  </footer>
+
+  <!-- Firebase SDK (compat - بسيط للدمج بسرعة) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
