@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app" class="app-shell">
+    <div id="app" style="width: 720px; height: 1600px; margin: 0 auto;">
         <!-- Selection Screen -->
-        <section id="selection-screen" class="screen active selection-screen">
+        <section id="selection-screen" class="screen active">
             <div class="hero-section">
                 <h1>صيدلية الغيث</h1>
                 <p>نظام إدارة المخزون الرقمي الشامل</p>
@@ -24,140 +24,94 @@
         </section>
 
         <!-- Dashboard Screen -->
-        <section id="dashboard-screen" class="screen dashboard-screen">
-            <aside class="sidebar">
-                <div class="brand">
-                    <div class="logo"><i class="fas fa-warehouse"></i></div>
-                    <div class="brand-text">Al-Gaith Pharmacy</div>
-                </div>
-
-                <nav class="nav">
-                    <button class="nav-item active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></button>
-                    <button class="nav-item"><i class="fas fa-boxes"></i> <span>Inventory</span></button>
-                    <button class="nav-item"><i class="fas fa-users"></i> <span>Employees</span></button>
-                    <button class="nav-item"><i class="fas fa-chart-line"></i> <span>Reports</span></button>
-                    <button class="nav-item"><i class="fas fa-cog"></i> <span>Settings</span></button>
+        <section id="dashboard-screen" class="screen">
+            <div class="dashboard-layout">
+                <nav class="glass-nav">
+                    <div class="user-tag">
+                        <button id="back-btn" class="back-circle"><i class="fas fa-chevron-right"></i></button>
+                        <div>
+                            <span id="current-user-name" style="font-weight: 900; font-size: 1.5rem; display: block;">اسم الموظف</span>
+                            <span style="color: var(--accent-teal); font-size: 0.9rem;">لوحة التحكم الرئيسية</span>
+                        </div>
+                    </div>
+                    <div class="action-bar">
+                        <div class="search-glass">
+                            <i class="fas fa-search" style="color: var(--text-dim);"></i>
+                            <input type="text" id="search-input" placeholder="بحث عن مادة...">
+                        </div>
+                        <button id="add-item-btn" class="btn-add">
+                            <i class="fas fa-plus-circle"></i> إضافة مادة
+                        </button>
+                    </div>
                 </nav>
 
-                <div class="sidebar-footer">
-                    <div class="user-mini"><img src="https://via.placeholder.com/40" alt="admin"><div>System Admin</div></div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">إجمالي المواد</span>
+                        <span class="count" id="total-items">0</span>
+                    </div>
+                    <div class="stat-box warning">
+                        <span style="color: var(--text-dim);">مواد قاربت على الانتهاء</span>
+                        <span class="count" id="expiring-soon">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span style="color: var(--text-dim);">الحالة</span>
+                        <span class="count" style="font-size: 1.5rem; color: var(--success);"><i class="fas fa-check-circle"></i> متصل</span>
+                    </div>
                 </div>
-            </aside>
 
-            <main class="main-area">
-                <header class="topbar">
-                    <div class="search-wrap">
-                        <i class="fas fa-search"></i>
-                        <input id="search-input" type="text" placeholder="Search inventory, SKUs, employees..." />
-                    </div>
-                    <div class="top-actions">
-                        <button id="add-item-btn" class="btn-add"><i class="fas fa-plus"></i> إضافة مادة</button>
-                        <div class="profile">
-                            <i class="fas fa-bell"></i>
-                            <div class="profile-name" id="current-user-name">اسم الموظف</div>
-                        </div>
-                    </div>
-                </header>
-
-                <section class="content-grid">
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-title">Total Stock</div>
-                            <div class="stat-value" id="total-items">0</div>
-                            <div class="stat-sub">units</div>
-                        </div>
-                        <div class="stat-card danger">
-                            <div class="stat-title">Expiring Soon</div>
-                            <div class="stat-value" id="expiring-soon">0</div>
-                            <div class="stat-sub">items</div>
-                        </div>
-                        <div class="stat-card warn">
-                            <div class="stat-title">Low Stock</div>
-                            <div class="stat-value">14</div>
-                            <div class="stat-sub">items</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-title">Active Shipments</div>
-                            <div class="stat-value">112</div>
-                            <div class="stat-sub">orders</div>
-                        </div>
-                    </div>
-
-                    <div class="main-row">
-                        <div class="list-column">
-                            <div class="panel">
-                                <div class="panel-header">
-                                    <h2>Items</h2>
-                                </div>
-                                <div id="items-grid" class="items-grid">
-                                    <!-- Items will appear here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <aside class="right-column">
-                            <div class="panel">
-                                <h3>Recent Activities</h3>
-                                <div id="recent-activities" class="recent-list">
-                                    <!-- recent activities -->
-                                </div>
-                            </div>
-                        </aside>
-                    </div>
-                </section>
-            </main>
+                <div class="items-grid" id="items-grid">
+                    <!-- Items will appear as glass cards here -->
+                </div>
+            </div>
         </section>
     </div>
 
     <!-- Modal for Adding/Editing -->
     <div id="modal" class="modal">
-        <div class="modal-content glass-modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modal-title">إضافة مادة جديدة</h2>
             </div>
             <form id="item-form">
                 <input type="hidden" id="edit-id">
                 <div class="form-grid">
-                    <div class="left-col">
+                    <div class="full-width">
                         <div class="camera-preview-box" id="image-preview">
                             <i class="fas fa-camera-retro" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
                             <span>انقر لالتقاط صورة أو اختيار ملف</span>
                             <img id="preview-img" style="display:none">
                         </div>
                         <input type="file" id="item-image" accept="image/*" hidden>
-                        <button type="button" id="start-camera" class="btn-cancel" style="margin-top: 0.5rem;">
+                        <button type="button" id="start-camera" class="btn-cancel" style="width: 100%; margin-top: 0.5rem; background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);">
                             <i class="fas fa-camera"></i> تشغيل الكاميرا الخلفية
                         </button>
                     </div>
 
-                    <div class="right-col">
-                        <div class="input-box">
-                            <label>اسم المادة</label>
-                            <input type="text" id="item-name" required placeholder="مثال: Vitamin C 1000mg">
-                        </div>
+                    <div class="input-box full-width">
+                        <label>اسم المادة</label>
+                        <input type="text" id="item-name" required placeholder="مثال: Vitamin C 1000mg">
+                    </div>
 
-                        <div class="input-grid">
-                            <div class="input-box">
-                                <label>تاريخ الإكسباير</label>
-                                <input type="text" id="item-expiry" required placeholder="MM/YYYY">
-                            </div>
+                    <div class="input-box">
+                        <label>تاريخ الإكسباير</label>
+                        <input type="text" id="item-expiry" required placeholder="MM/YYYY">
+                    </div>
 
-                            <div class="input-box">
-                                <label>الكمية الحالية</label>
-                                <input type="number" id="item-quantity" required min="0" value="0">
-                            </div>
-                        </div>
+                    <div class="input-box">
+                        <label>الكمية الحالية</label>
+                        <input type="number" id="item-quantity" required min="0" value="0">
+                    </div>
 
-                        <div class="input-box">
-                            <label>ملاحظات إضافية</label>
-                            <textarea id="item-notes" rows="4" placeholder="أدخل أي ملاحظات هنا..."></textarea>
-                        </div>
+                    <div class="input-box full-width">
+                        <label>ملاحظات إضافية</label>
+                        <textarea id="item-notes" rows="3" placeholder="أدخل أي ملاحظات هنا..."></textarea>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn-cancel close-modal">إلغاء</button>
                     <button type="submit" class="btn-save">حفظ البيانات</button>
+                    <button type="button" class="btn-cancel close-modal">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -167,7 +121,7 @@
     <div id="camera-overlay" class="camera-full">
         <video id="video" autoplay playsinline></video>
         <div class="cam-controls">
-            <button id="close-camera" class="back-circle"><i class="fas fa-times"></i></button>
+            <button id="close-camera" class="back-circle" style="font-size: 1.5rem; width: 60px; height: 60px;"><i class="fas fa-times"></i></button>
             <div id="capture-btn" class="shutter"></div>
         </div>
     </div>
