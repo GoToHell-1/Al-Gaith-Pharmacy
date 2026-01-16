@@ -1,0 +1,7 @@
+{
+  "name": "Al-Ghaith Pharmacy Inventory",
+  "description": "A smart inventory management system for Al-Ghaith Pharmacy featuring employee selection, expiry tracking, and camera-based item entry.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
